@@ -3,4 +3,4 @@
  */
 
 export * from './lib/input-color-picker'
-export * from './lib/input-color-picker.module'
+export * from './lib/input-color-picker.directive'

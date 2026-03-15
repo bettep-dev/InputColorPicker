@@ -1,86 +1,135 @@
-## InputColorPicker Angular Library.
+# InputColorPicker
 
-A library of color pickers in input format.
+[![npm version](https://img.shields.io/npm/v/input-color-picker.svg)](https://www.npmjs.com/package/input-color-picker)
+[![license](https://img.shields.io/npm/l/input-color-picker.svg)](https://github.com/Hongdaesik/InputColorPicker/blob/master/LICENSE)
+[![Angular](https://img.shields.io/badge/Angular-21+-dd0031.svg)](https://angular.dev)
 
-You can check out the demo <a href="https://bettep.org/input-color-picker">here</a>.
+A lightweight Angular color picker component with an SVG-based palette, search input, and full `ControlValueAccessor` support for seamless Reactive Forms / `ngModel` integration. Ships with 1,700+ built-in colors.
 
-![Excute](https://raw.githubusercontent.com/Hongdaesik/InputColorPicker/master/DEMO.gif)
+[Live Demo](https://bettep.org/input-color-picker)
 
-<br><br>
+![Demo](https://raw.githubusercontent.com/Hongdaesik/InputColorPicker/master/DEMO.gif)
+
+---
 
 ## Installation
 
 ```bash
-npm install --save input-color-picker
+npm install input-color-picker
 ```
 
-<br><br>
+---
 
-## Usage
+## Quick Start
 
 ```typescript
-import {
-  FormsModule
-} from '@angular/forms'
-import {
-  CommonModule
-} from '@angular/common'
+import { Component } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { InputColorPickerComponent } from 'input-color-picker'
 
-import {
-  InputColorPickerModule or InputColorPickerComponent
-} from 'input-color-picker'
-
-@Component( {
-
-  imports: [
-
-    FormsModule,
-    CommonModule,
-
-    InputColorPickerModule or InputColorPickerComponent
-  ],
-  standalone: true,
-  selector: 'app-my-component',
-  template: '<input-color-picker [(ngModel)]="color" [col]="40" [boxHeight]="48" [colorWidth]="20" [colorHeight]="20" [placeholder]="\'Color selection\'"></input-color-picker>'
-} )
-export class MyComponent {
-
-  public color: string
-
-  /* Optional */
-  this.palette = [ { code: '#ffffff', name: 'White' } ... ]
+@Component({
+  selector: 'app-example',
+  imports: [FormsModule, InputColorPickerComponent],
+  template: `
+    <input-color-picker [(ngModel)]="selectedColor" />
+    <p>Selected: {{ selectedColor }}</p>
+  `
+})
+export class ExampleComponent {
+  selectedColor = '#6366f1'
 }
 ```
 
-<br><br>
+---
 
-## Parameter
-|Name|Type|Description|Default|
-|---|---|---|---|
-|[col]|number|Number of colors to include in one line|40|
-|[palette]|array|[ { "code": "#ffffff", "name": "White" } ... ]|If you set a value, the palette will change to that value.|
-|[boxHeight]|number|Box height (px)|48|
-|[colorWidth]|number|Color width (px)|20|
-|[colorHeight]|number|Color height (px)|20|
-|[placeholder]|string|Placeholder before color selection|'Color selection'|
+## API
 
-<br><br>
+### Inputs
 
-## Change Log
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `[col]` | `number` | `40` | Number of color swatches per row. |
+| `[palette]` | `Palette[]` | 1,700+ built-in colors | Custom color palette array. |
+| `[boxHeight]` | `number` | `48` | Height of the trigger button in pixels. |
+| `[colorWidth]` | `number` | `20` | Width of each color swatch in pixels. |
+| `[colorHeight]` | `number` | `20` | Height of each color swatch in pixels. |
+| `[placeholder]` | `string` | `'Color selection'` | Placeholder text when no color is selected. |
 
-`1.0.0` : Initial release.
-`1.0.2` : Remove package dependency.
-`1.0.3` : Modify package dependency version range.
-`1.0.4` : Standalone / SSR compatible.
+### Forms Support
 
-<br><br>
+The component implements `ControlValueAccessor` and works with both template-driven and reactive forms.
+
+```typescript
+// Template-driven
+<input-color-picker [(ngModel)]="color" />
+
+// Reactive Forms
+<input-color-picker [formControl]="colorControl" />
+<input-color-picker formControlName="color" />
+```
+
+### Types
+
+```typescript
+import { Palette, Color } from 'input-color-picker'
+
+// Palette — each color entry in the picker
+interface Palette {
+  code: string   // Hex color code (e.g. '#ff3100')
+  name: string   // Display name  (e.g. 'Red')
+}
+```
+
+---
+
+## Custom Palette
+
+```typescript
+import { Component } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { InputColorPickerComponent, Palette } from 'input-color-picker'
+
+@Component({
+  selector: 'app-custom',
+  imports: [FormsModule, InputColorPickerComponent],
+  template: `
+    <input-color-picker
+      [(ngModel)]="color"
+      [palette]="brandColors"
+      [col]="5"
+      [colorWidth]="32"
+      [colorHeight]="32"
+      [placeholder]="'Pick a brand color'"
+    />
+  `
+})
+export class CustomComponent {
+  color = ''
+
+  brandColors: Palette[] = [
+    { code: '#1877F2', name: 'Facebook Blue' },
+    { code: '#1DA1F2', name: 'Twitter Blue' },
+    { code: '#FF0000', name: 'YouTube Red' },
+    { code: '#E4405F', name: 'Instagram Pink' },
+    { code: '#0A66C2', name: 'LinkedIn Blue' },
+  ]
+}
+```
+
+---
+
+## Changelog
+
+| Version | Description |
+|---------|-------------|
+| `1.0.5` | Angular 21 upgrade. Signal inputs, `inject()`, `effect()` migration. |
+| `1.0.4` | Standalone / SSR compatible. |
+| `1.0.3` | Modify package dependency version range. |
+| `1.0.2` | Remove package dependency. |
+| `1.0.0` | Initial release. |
+
+---
 
 ## License
 
-MIT
-
-<br><br>
-
-## Other programs
-
-<https://bettep.org>
+[MIT](https://opensource.org/licenses/MIT) &copy; [HONG DAESIK](https://bettep.org)

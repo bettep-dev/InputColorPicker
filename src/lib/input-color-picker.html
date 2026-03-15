@@ -1,4 +1,4 @@
-<section [style.line-height.px]="boxHeight">
+<section [style.line-height.px]="boxHeight()">
 
   <div class="button-container">
 
@@ -11,7 +11,7 @@
 
     <div>
 
-      <input [(ngModel)]="raw" (ngModelChange)="onInput()" (keyup.enter)="onClose()" [style.height.px]="boxHeight" [style.line-height.px]="boxHeight" name="raw" type="search" placeholder="#000000 ~ #FFFFFF">
+      <input [(ngModel)]="raw" (ngModelChange)="onInput()" (keyup.enter)="onClose()" [style.height.px]="boxHeight()" [style.line-height.px]="boxHeight()" name="raw" type="search" placeholder="#000000 ~ #FFFFFF">
     </div>
 
     <div>
@@ -20,7 +20,9 @@
 
         <svg #svg (mouseenter)="onEnter()" (mouseleave)="onLeave()" [attr.viewBox]="box" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid meet">
 
-          <rect *ngFor="let color of picker let index = index" (click)="onClick( index )" (mouseenter)="onEnter( $event, index )" [attr.x]="color.x" [attr.y]="color.y" [attr.fill]="color.palette.code" [attr.name]="color.palette.name" [attr.width]="colorWidth" [attr.height]="colorHeight"></rect>
+          @for (color of picker; let index = $index; track color.palette.code) {
+            <rect (click)="onClick( index )" (mouseenter)="onEnter( $event, index )" [attr.x]="color.x" [attr.y]="color.y" [attr.fill]="color.palette.code" [attr.name]="color.palette.name" [attr.width]="colorWidth()" [attr.height]="colorHeight()"></rect>
+          }
         </svg>
       </div>
     </div>

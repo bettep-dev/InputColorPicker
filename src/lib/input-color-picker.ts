@@ -1,21 +1,18 @@
 import {
-  Inject,
-  OnChanges,
+  inject,
+  effect,
+  untracked,
   Component,
-  ViewChild,
+  viewChild,
   ElementRef,
   forwardRef,
   PLATFORM_ID,
-  AfterViewInit,
 } from '@angular/core'
 import {
   FormsModule,
   NG_VALUE_ACCESSOR
 } from '@angular/forms'
-import {
-  CommonModule,
-  isPlatformBrowser
-} from '@angular/common'
+import { isPlatformBrowser } from '@angular/common';
 
 import {
   Color,
@@ -28,11 +25,8 @@ import defaultPalette from './palette.json'
 @Component( {
 
   imports: [
-
-    FormsModule,
-    CommonModule
-  ],
-  standalone: true,
+    FormsModule
+],
   selector: 'input-color-picker',
   templateUrl: './input-color-picker.html',
   styleUrls: [ './input-color-picker.scss' ],
@@ -43,45 +37,37 @@ import defaultPalette from './palette.json'
     useExisting: forwardRef( () => InputColorPickerComponent )
   } ],
 } )
-export class InputColorPickerComponent extends InputColorPickerDirective implements OnChanges, AfterViewInit {
+export class InputColorPickerComponent extends InputColorPickerDirective {
 
   public box: any
   public hover ? : Color
   public picker!: Array < Color > ;
 
-  @ViewChild( 'svg' ) svg!: ElementRef
+  svg = viewChild<ElementRef>( 'svg' )
 
-  constructor(
+  private platformId = inject( PLATFORM_ID )
+  private element = inject( ElementRef )
 
-    @Inject( PLATFORM_ID ) private platformId: Object,
+  private pickerEffect = effect( () => {
 
-    private element: ElementRef ) {
-
-    super()
-  }
-
-  ngOnChanges(): void {
-
-    if ( !isPlatformBrowser( this.platformId ) ) return
-
-    this.setPicker()
-  }
-
-  ngAfterViewInit(): void {
+    this.palette()
+    this.col()
+    this.colorWidth()
+    this.colorHeight()
 
     if ( !isPlatformBrowser( this.platformId ) ) return
 
-    this.setPicker()
-  }
+    untracked( () => this.setPicker() )
+  } )
 
   /* Set */
   setPicker(): void {
 
-    if ( !this.palette || this.palette?.length < 1 ) this.palette = defaultPalette
+    let palette = this.palette() && this.palette()!.length > 0 ? this.palette()! : defaultPalette
 
-    this.box = [ 0, 0, this.col * this.colorWidth, this.colorHeight * Math.ceil( this.palette.length / this.col ) ].join( ' ' )
+    this.box = [ 0, 0, this.col() * this.colorWidth(), this.colorHeight() * Math.ceil( palette.length / this.col() ) ].join( ' ' )
 
-    this.picker = Array.from( this.palette, ( p: Palette, i: number ) => new Color( this.colorWidth * ( i % this.col ), this.colorHeight * Math.floor( i / this.col ), p ) )
+    this.picker = Array.from( palette, ( p: Palette, i: number ) => new Color( this.colorWidth() * ( i % this.col() ), this.colorHeight() * Math.floor( i / this.col() ), p ) )
   }
 
   /* Action */
@@ -97,7 +83,7 @@ export class InputColorPickerComponent extends InputColorPickerDirective impleme
 
   onClick( i: number ): void {
 
-    this.value = this.palette![ i ].code
+    this.value = this.picker[ i ].palette.code
 
     this.onChange( this.value )
 
@@ -121,7 +107,7 @@ export class InputColorPickerComponent extends InputColorPickerDirective impleme
 
       this.hover = this.picker[ index! ]
 
-      let parent = this.svg?.nativeElement.getBoundingClientRect()
+      let parent = this.svg()?.nativeElement.getBoundingClientRect()
 
       let client = event.target.getBoundingClientRect()
 
@@ -150,6 +136,6 @@ export class InputColorPickerComponent extends InputColorPickerDirective impleme
 
   get getText(): string {
 
-    return this.raw || this.placeholder
+    return this.raw || this.placeholder()
   }
 }
