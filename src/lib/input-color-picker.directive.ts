@@ -1,5 +1,5 @@
 import {
-  Input,
+  input,
   Directive,
 } from "@angular/core"
 import {
@@ -37,7 +37,6 @@ export class Palette {
 @Directive( {
 
   selector: '[col], [palette], [boxHeight], [colorWidth], [colorHeight], [placeholder]',
-  standalone: true
 } )
 export class InputColorPickerDirective implements ControlValueAccessor {
 
@@ -46,14 +45,12 @@ export class InputColorPickerDirective implements ControlValueAccessor {
   public onChange: any = () => {}
   public onTouched: any = () => {}
 
-  @Input() public col: number = 40
-  @Input() public palette ? : Array < Palette > ;
-  @Input() public boxHeight: number = 48
-  @Input() public colorWidth: number = 20
-  @Input() public colorHeight: number = 20
-  @Input() public placeholder: string = 'Color selection'
-
-  constructor() {}
+  public col = input<number>( 40 )
+  public palette = input<Palette[] | undefined>( undefined )
+  public boxHeight = input<number>( 48 )
+  public colorWidth = input<number>( 20 )
+  public colorHeight = input<number>( 20 )
+  public placeholder = input<string>( 'Color selection' )
 
   get value(): string | undefined {
 
